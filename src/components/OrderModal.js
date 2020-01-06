@@ -1,26 +1,59 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { createUseStyles } from 'react-jss';
 
-class Order extends React.Component {
-  onEdit = (obj) => () => {
-    this.props.onEdit(obj);
+const useStyles = createUseStyles({
+  modalStyle: {
+    display: 'block',
+    position: 'fixed',
+    zIndex: 1,
+    paddingTop: 100,
+    left: 0,
+    top: 0,
+    width: '100%',
+    height: '100%',
+    overflow: 'auto',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  modalContent: {
+    backgroundColor: '#fefefe',
+    margin: 'auto',
+    padding: 20,
+    border: '1px solid #888',
+    width: '80%',
+  },
+  closeBtn: {
+    color: '#aaaaaa',
+    float: 'right',
+    fontSize: 28,
+    fontWeight: 'bold',
+    '&:hover': {
+      color: '#000',
+      textDecoration: 'none',
+      cursor: 'pointer',
+    }
   }
+})
 
-  onDelete = (index) => () => {
-    this.props.onDelete(index); // delete from outside;
-  }
+const OrderModal = (props) => {
+  const { isEditMode } = props;
+  const classes = useStyles();
+  const [modelVisible, setModelVisible] = useState(false);
+  const onClickClose = () => setModelVisible(false);
+  const onClickOpen = () => setModelVisible(true);
+  return (
+    <div>
+      <button id="myBtn" onClick={onClickOpen}>{isEditMode ? 'Edit' : 'Add'}</button>
 
-  render() {
-    const { itemIndex, name, price, notes } = this.props;
-    return (
-      <tr>
-        <td>{name}</td>
-        <td>{price}</td>
-        <td>{notes}</td>
-        <td onClick={this.onEdit({ name, price, notes })}>edit Logo</td>
-        <td onClick={this.onDelete(itemIndex)}>delete Logo</td>
-      </tr>
-    )
-  }
+      {modelVisible && 
+        <div id="myModal" className={classes.modalStyle} onClick={onClickClose}>
+          <div className={classes.modalContent} onClick={(e) => e.stopPropagation()}>
+            <span className={classes.closeBtn} onClick={onClickClose}>&times;</span>
+            <p>Some text in the Modal..</p>
+          </div>
+        </div>
+      }
+    </div>
+  )
 }
 
-export default Order;
+export default OrderModal;
