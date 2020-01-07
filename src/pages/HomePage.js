@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { createUseStyles } from 'react-jss';
 import OrderModal from '../components/OrderModal';
 
@@ -81,27 +81,26 @@ const useStyles = createUseStyles({
   }
 })
 
-const StyleTd = (props) => {
+const StyleTd = ({ children, ...others }) => {
   const classes = useStyles();
-  const { children, ...others } = props;
   return <td className={classes.td} {...others}>{children}</td>
 }
 
-const HomePage = (props) => {
+const HomePage = () => {
   const [orders, setOrders] = useState(samples);
   const classes = useStyles();
-  const onDelete = (orderIndex) => () => {
+  const onDelete = useCallback((orderIndex) => () => {
     orders.splice(orderIndex, 1);
     setOrders([...orders]);
-  };
-  const onEditOrder = (orderIndex) => (data) => {
+  }, [orders, setOrders]);
+  const onEditOrder = useCallback((orderIndex) => (data) => {
     orders[orderIndex] = data;
     setOrders([...orders]);
-  }
-  const onAddOrder = (data) => {
+  }, [orders, setOrders]);
+  const onAddOrder = useCallback((data) => {
     orders.push(data);
     setOrders([...orders]);
-  }
+  }, [orders, setOrders]);
   return (
     <div className={classes.root}>
       <div className={classes.header}>
