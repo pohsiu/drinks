@@ -117,9 +117,9 @@ const useStyles = createUseStyles({
 const OrderModal = (props) => {
   const { isEditMode, data = {}, onEditOrder, onAddOrder } = props;
   const classes = useStyles();
-  const [name, setName] = useState(data.name);
-  const [price, setPrice] = useState(data.price);
-  const [notes, setNotes] = useState(data.notes);
+  const [name, setName] = useState(data.name || '');
+  const [price, setPrice] = useState(data.price || '');
+  const [notes, setNotes] = useState(data.notes || '');
   const [modelVisible, setModelVisible] = useState(false);
   const onClickClose = () => setModelVisible(false);
   const onClickOpen = () => setModelVisible(true);
@@ -157,7 +157,7 @@ const OrderModal = (props) => {
               <h3>{`${isEditMode ? '編輯' : '新增'}訂單`}</h3>
               <div className={classes.divier} />
             </div>
-            <div className={classes.modalBody}>
+            <div className={classes.modalBody}>  
               <div className={classes.inRowClass}>
                 <h5 className={classes.h5}>品項:</h5>
                 <input type='text' value={name} onChange={onChangeName} className={classes.textInput}/>
