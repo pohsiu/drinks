@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { createUseStyles } from 'react-jss';
 
 const useStyles = createUseStyles({
@@ -121,10 +121,15 @@ const OrderModal = (props) => {
   const [price, setPrice] = useState(data.price || '');
   const [notes, setNotes] = useState(data.notes || '');
   const [modelVisible, setModelVisible] = useState(false);
-  const onClickClose = () => setModelVisible(false);
-  const onClickOpen = () => setModelVisible(true);
+  const onClickClose = useCallback(() => setModelVisible(false), [setModelVisible]);
+  const onClickOpen = useCallback(() => {
+    setModelVisible(true);
+    setNotes(data.notes);
+    setName(data.name);
+    setPrice(data.price);
+  }, [setModelVisible, setPrice, setName, setNotes, data]);
   const onClickCancel = onClickClose;
-  const onClickConfirm = () => {
+  const onClickConfirm = useCallback(() => {
     if (isEditMode) {
       onEditOrder({
         name,
@@ -140,10 +145,10 @@ const OrderModal = (props) => {
     }
     
     onClickClose();
-  }
-  const onChangeName = (e) => setName(e.target.value);
-  const onChangePrice = (e) => setPrice(e.target.value);
-  const onChangeNotes = (e) => setNotes(e.target.value);
+  }, [isEditMode, onEditOrder, onAddOrder, onClickClose, name, price, notes]);
+  const onChangeName = useCallback((e) => setName(e.target.value), []);
+  const onChangePrice = useCallback((e) => setPrice(e.target.value), []);
+  const onChangeNotes = useCallback((e) => setNotes(e.target.value), []);
   return (
     <div>
       <div className={classes.btn} onClick={onClickOpen}>{isEditMode ? <i className="fa fa-edit" /> : <i className="fa fa-plus" />}</div>
