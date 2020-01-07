@@ -107,6 +107,9 @@ const useStyles = createUseStyles({
     position: 'absolute',
     top: 4,
     right: 8,
+  },
+  h5: {
+    color: '#000',
   }
 })
 

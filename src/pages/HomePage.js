@@ -38,7 +38,6 @@ const useStyles = createUseStyles({
     height: 20,
     padding: '4px 4px',
     textAlign: 'center',
-    margin: 4,
     borderRadius: 6,
     '&:hover': {
       cursor: 'pointer',
