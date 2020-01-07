@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { createUseStyles } from 'react-jss';
+import clsx from 'clsx';
 
 const useStyles = createUseStyles({
   modalStyle: {
@@ -80,6 +81,10 @@ const useStyles = createUseStyles({
     },
     margin: 'auto',
   },
+  validErrorClass: {
+    border: '1px solid red',
+    animation: 'shake 0.08s 2',
+  },
   cancelClass: {
     margin: 4,
     width: 40,
@@ -110,6 +115,11 @@ const useStyles = createUseStyles({
   },
   h5: {
     color: '#000',
+  },
+  errh5: {
+    color: 'grey',
+    fontStyle: 'oblique',
+    textAlign: 'end',
   }
 })
 
@@ -120,6 +130,8 @@ const OrderModal = (props) => {
   const [name, setName] = useState(data.name || '');
   const [price, setPrice] = useState(data.price || '');
   const [notes, setNotes] = useState(data.notes || '');
+  const [isNameValid, setIsNameValid] = useState(true);
+  const [isPriceValid, setIsPriceValid] = useState(true);
   const [modelVisible, setModelVisible] = useState(false);
   const onClickClose = useCallback(() => setModelVisible(false), [setModelVisible]);
   const onClickOpen = useCallback(() => {
@@ -127,7 +139,9 @@ const OrderModal = (props) => {
     setNotes(data.notes);
     setName(data.name);
     setPrice(data.price);
-  }, [setModelVisible, setPrice, setName, setNotes, data]);
+    setIsPriceValid(true);
+    setIsNameValid(true);
+  }, [setModelVisible, setPrice, setName, setNotes, data, setIsNameValid, setIsPriceValid]);
   const onClickCancel = onClickClose;
   const onClickConfirm = useCallback(() => {
     if (isEditMode) {
@@ -137,6 +151,10 @@ const OrderModal = (props) => {
         notes,
       })
     } else {
+      let isValid = true;
+      if (!name) { setIsNameValid(false);  isValid = false; }
+      if (!price) { setIsPriceValid(false); isValid = false; }
+      if (!isValid) return;
       onAddOrder({
         name,
         price,
@@ -145,9 +163,15 @@ const OrderModal = (props) => {
     }
     
     onClickClose();
-  }, [isEditMode, onEditOrder, onAddOrder, onClickClose, name, price, notes]);
-  const onChangeName = useCallback((e) => setName(e.target.value), []);
-  const onChangePrice = useCallback((e) => setPrice(e.target.value), []);
+  }, [isEditMode, onEditOrder, onAddOrder, onClickClose, name, price, notes, setIsPriceValid, setIsNameValid]);
+  const onChangeName = useCallback((e) => {
+    if (e.target.value) setIsNameValid(true);
+    setName(e.target.value)
+  }, [setName, setIsNameValid]);
+  const onChangePrice = useCallback((e) => {
+    if (e.target.value) setIsPriceValid(true);
+    setPrice(e.target.value);
+  }, [setIsPriceValid, setPrice]);
   const onChangeNotes = useCallback((e) => setNotes(e.target.value), []);
   return (
     <div>
@@ -165,12 +189,14 @@ const OrderModal = (props) => {
             <div className={classes.modalBody}>  
               <div className={classes.inRowClass}>
                 <h5 className={classes.h5}>品項:</h5>
-                <input type='text' value={name} onChange={onChangeName} className={classes.textInput}/>
+                <input type='text' value={name} onChange={onChangeName} className={clsx(classes.textInput, { [classes.validErrorClass]: !isNameValid })}/>
               </div>
+              {!isNameValid && <h5 className={classes.errh5}>請輸入品項</h5>}
               <div className={classes.inRowClass}>
                 <h5 className={classes.h5}>金額:</h5>
-                <input required type='number' step="5" min="0" value={price} onChange={onChangePrice} className={classes.textInput}/>
+                <input required type='number' step="5" min="0" value={price} onChange={onChangePrice} className={clsx(classes.textInput, { [classes.validErrorClass]: !isPriceValid })}/>
               </div>
+              {!isPriceValid && <h5 className={classes.errh5}>請輸入金額</h5>}
               <div className={classes.inRowClass}>
                 <h5 className={classes.h5}>備註:</h5>
                 <textarea value={notes} onChange={onChangeNotes} className={classes.textArea}/>
