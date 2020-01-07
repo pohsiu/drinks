@@ -20,6 +20,7 @@ const useStyles = createUseStyles({
     margin: 'auto',
     border: '1px solid #888',
     width: '40%',
+    minWidth: 250,
     position: 'relative',
     borderRadius: 12,
     paddingBottom: 20,
